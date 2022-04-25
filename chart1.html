@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+
+        google.charts.load('current', {'packages':['bar']});
+
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = new google.visualization.arrayToDataTable([
+                ['Country', 'cubic meters per year'],
+                ['Mongolia', 3775],
+                ['Niger', 3519],
+                ['Bolivia', 3468],
+                ['Brunei', 3421],
+                ['United Arab Emirates', 3136],
+                ['Bermuda', 2995],
+                ['Kiribati', 2859],
+                ['United States of America', 2842],
+                ['Dominica', 2565],
+                ['Mauritania', 2565],
+                ['Nicaragua',912],
+                ['Yemen',901],
+                ['North Korea', 888],
+                ['Gambia',887],
+                ['Rwanda',821],
+                ['Congo', 786],
+                ['Bangladesh', 769],
+                ['Solomon Islands',723],
+                ['Burundi', 719],
+                ['Democratic Republic of the Congo', 552],
+            ]);
+            
+            var options = {
+                title: 'Per Capita Water Footprint',
+                width: 900,
+                legend: { position: 'none' },
+                chart: {title: 'Per Capita Water Footprint',
+                        subtitle: 'Top 10 and Bottom Ten Countries' },
+                bars: 'horizontal', 
+                axes: {
+                    x: {
+                        0: { side: 'top', label: 'Cubic meters per year'} // Top x-axis.
+                        }
+                        },
+                bar: { groupWidth: "90%" }
+            };
+
+            var chart = new google.charts.Bar(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        };
+
+        
+    </script>
+    </head>
+
+    <body>
+        <div id="chart_div" style="width: 900px; height: 500px;"></div>
+    </body>
+</html>
