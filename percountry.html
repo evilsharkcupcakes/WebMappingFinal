@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>Water Data by Country</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #000000;
+        }
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px auto;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+        .description {
+            border: 1px solid black;
+            background: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Water Data by Country</h1>
+    </header>
+
+    <div id='map'></div>
+
+    <footer>
+        <p>Map authored by EMMA HOLT</p>
+        <p>Water footprint data from UNESCO (http://ihp-wins.unesco.org/layers/geonode:bluecons/metadata_detail)<br>
+            Precipitation data from the World Bank (https://data.worldbank.org/indicator/ag.lnd.prcp.mm?end=2017&start=2017&view=map)</p>
+    </footer>
+
+<script src="alldata.js"></script>
+    
+<script>
+    var map = L.map('map', {
+        center: [30,0],
+        zoom: 2,
+    });
+
+    var tiles =L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	    maxZoom: 19,
+	    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+    tiles.addTo(map);
+    
+    //footprint
+    var footprint = L.geoJSON(waterdat, {
+        style: function (features) {
+            return {color: getFootColor(features.properties.TotalWFP*features.properties.POP)};
+            },
+
+        onEachFeature: function (features, layer) {
+            var name = features.properties.COUNTRY
+            var waterused = features.properties.TotalWFP*features.properties.POP
+
+            var popup = ("<b>"+name+"</b><br>"
+            +waterused+ " cubic meters <br>")
+            layer.bindPopup(popup)
+        }
+    })
+    .addTo(map);
+
+    //rainfall
+    var precip = L.geoJSON(waterdat, {
+        style: function(features){
+            return {color: getRainColor(features.properties.Field3)}
+        },
+
+        onEachFeature: function (features, layer) {
+            var name = features.properties.COUNTRY
+            var capPrecip= features.properties.Field3
+
+            var popup = ("<b>"+name+"</b><br>"
+            +capPrecip+ "  mm <br>")
+            layer.bindPopup(popup)
+        }
+    }).addTo(map)
+
+    
+    
+    function getFootColor (footprint){
+        var thecolor;
+        if(footprint > 82000000000){
+            thecolor = '#ED1313'}
+        else if(footprint > 52000000000){
+            thecolor = '#EDED13'}  
+        else if(footprint > 25000000000){
+            thecolor = '#18B445'}
+        else if(footprint > 5300000000){
+            thecolor = '#13EDED'}
+        else{
+            thecolor = '#2813ED'
+        }
+        return thecolor;
+    }
+
+    function getRainColor (precip){
+        var thecolor;
+        if(precip> 1830){
+            thecolor = '#2813ED'}
+        else if(precip > 1200){
+            thecolor = '#13EDED'}  
+        else if(precip > 640){
+            thecolor = '#18B445'}
+        else if(precip > 455){
+            thecolor = '#EDED13'}
+        else{
+            thecolor = '#ED1313'
+        }
+        return thecolor;
+    }
+
+    var sourcesLayers = {"<b style='color:green '>Water Footprint</b>": footprint, "<b style='color:blue '>Rainfall</b>": precip}
+        
+    L.control.layers(null, sourcesLayers, { collapsed:false }).addTo(map);
+
+    L.Control.textbox = L.Control.extend({
+		onAdd: function(map) {
+			
+		var text = L.DomUtil.create('div');
+        text.className = "description";
+		text.id = "info_text";
+		text.innerHTML = ( "<strong> Footprint,  Precipitation</strong> <br>"+
+                            "> 82000000000,  <455   ".fontcolor('#ED1313')+"<br>"
+                            +"> 52000000000,  <640   ".fontcolor('#EDED13')+"<br>"
+                            +"> 25000000000,  <1200    ".fontcolor('#18B445')+"<br>"
+                            + "> 5300000000,    <1830".fontcolor('#13EDED')+"<br>"
+                            +"< 5300000000,   >1830   ".fontcolor('#2813ED'));
+		return text;
+		},
+		onRemove: function(map) {
+			// Nothing to do here
+		}
+	    });
+	
+    
+        L.control.textbox = function(opts) { return new L.Control.textbox(opts,);}
+	    L.control.textbox({ position: 'bottomleft'},  {background: '#ffffff'}).addTo(map);
+
+</script>
+
+    
+
+</body>
+
+</html>
