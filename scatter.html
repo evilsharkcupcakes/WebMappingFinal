@@ -1,0 +1,55 @@
+<html>
+    <head>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script> type="text/javascript">
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+
+            function drawChart(){
+                var dataTable = new google.visualization.DataTable();
+                    dataTable.addColumn('number', 'Precipiation');
+                    dataTable.addColumn('number', 'Water Footprint');
+                    dataTable.addColumn({type: 'string', role: 'tooltip'});
+                    dataTable.addRows([
+                        [ 0.0000929, 3775, 'Mongolia' ],
+                        [0.0000103, 3519 , 'Niger'],
+                        [ 0.000119894, 3468, 'Bolivia'],
+                        [  0.007259305, 3421, 'Brunei'],
+                        [ 0.0000126, 3136, 'United Arab Emirates'],
+                        [  0, 2995, 'Bermuda'],
+                        [ 0, 2859, 'Kiribati'],
+                        [  0.00000237, 2842, 'United States of America'],
+                    // [  0.029422151, 2565],
+                        [  0.0000287, 2565,'Mauritania'],
+                        [ 0.000407866, 912,'Nicaragua'],
+                        [ 0.00000785, 901, 'Yemen'],
+                        [  0.0000436, 888, 'North Korea'],
+                        [ 0.000509804, 887, 'Gambia'],
+                        [ 0.000130691, 821, 'Rwanda'],
+                        [ 0.000424651, 786, 'Congo'],
+                        [  0.0000187, 769, 'Bangladesh'],
+                        [ 0.006152808, 723, 'Solomon Islands'],
+                        [  0.000162041, 719, 'Burundi'],
+                        [  0.0000264, 552, 'Democratic Republic of the Congo']
+                    ]);
+
+                var options = {
+                    title: 'Per Capita Water Footprint Vs Precipitation', 
+                    vAxis: {title: 'Water Footprint (cubic meters per year)', minValue: 500, maxValue: 4000},
+                    hAxis: {title: 'Precipiation (mm per year)', minValue:0, maxValue: 0.008},
+                    legend: 'none'
+                };
+
+                var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+
+                chart.draw(dataTable, options);
+            }
+
+
+        </script>
+    </head>
+    
+    <body>
+        <div id="chart_div" style="width: 1500px; height: 500px;"></div>
+      </body>
+</html>
