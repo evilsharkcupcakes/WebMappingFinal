@@ -1,0 +1,143 @@
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css' rel='stylesheet' />
+
+<div id='map'></div>
+<div class='map-overlay' id='features'><h2>National Water Footprint and Precipitation</h2><div id='pd'><p>Find a Country!</p></div></div>
+<div class='map-overlay' id='legend'></div>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    
+    h2,
+    h3 {
+        margin: 10px;
+        font-size: 18px;
+    }
+    
+    h3 {
+        font-size: 16px;
+    }
+    
+    p {
+        margin: 10px;
+    }
+    
+    #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+    }
+   
+    .map-overlay {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: #fff;
+        margin-right: 20px;
+        font-family: Arial, sans-serif;
+        overflow: auto;
+        border-radius: 3px;
+    }
+    
+    #features {
+        top: 0;
+        height: 250px;
+        margin-top: 20px;
+        width: 250px;
+    }
+    
+    #legend {
+        padding: 10px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        line-height: 18px;
+        height: 110px;
+        margin-bottom: 40px;
+        width: 400px;
+    }
+    
+    .legend-key {
+        display: inline-block;
+        border-radius: 20%;
+        width: 10px;
+        height: 10px;
+        margin-right: 5px;
+    }
+    
+</style>
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZWVldmlsc2hhcmtjdXBjYWtlcyIsImEiOiJjbDB5ZTRuYW4wMjF6M2psZ3V6cGM1NGxhIn0.sM-wymd1WiAdRmNDQXOgYw';
+
+    const map = new mapboxgl.Map({
+            container: 'map', 
+            style: 'mapbox://styles/eeevilsharkcupcakes/cl2e7ujrw000315rtsv8rbow2'
+            }); 
+    
+    map.on('load', () => {
+        
+        const layers = [
+            'Above average water footprint and below average rainfall',
+            'Above average water footprint and rainfall',
+            'Below average water footprint and rainfall',
+            'Below average water footprint and above average rainfall' 
+            ];
+        const colors = [
+            '#ff0505',
+            '#fa8900',
+            '#eefc27',
+            '#16ff0a'
+            ];
+
+        const legend = document.getElementById('legend');
+        
+        layers.forEach((layer, i) => {
+            const color = colors[i];
+            const item = document.createElement('div');
+            const key = document.createElement('span');
+            key.className = 'legend-key';
+            key.style.backgroundColor = color;
+
+            const value = document.createElement('span');
+            value.innerHTML = `${layer}`;
+            item.appendChild(key);
+            item.appendChild(value);
+            legend.appendChild(item);
+            });
+
+        map.on('mousemove', (event) => {
+
+            const waterdata = map.queryRenderedFeatures(event.point, {
+                layers: ['mapboxdata-6q1qj5']
+                 });
+
+            //console.log(`you get ${waterdata}`)
+
+            if(waterdata.length >0 ){
+                document.getElementById('pd').innerHTML = '<p>' + waterdata[0].properties.NAME+'</p>'+'<br>'
+                +'<p> Water Footprint: <strong><em>' +waterdata[0].properties.TotalWFP+ '</strong> </em>'+'<br>cubic meters per person</p><br>'+
+                '<p> Precipitation: <strong><em>' +waterdata[0].properties.percapprecip.toFixed(6)+ '</strong> </em>'+' <br>mm per person</p>'
+            }
+
+            else{
+                document.getElementById('pd').innerHTML = `<p>Hover over a country!</p>`;
+            }
+        
+        });
+
+    });
+    
+    map.getCanvas().style.cursor = 'default';
+
+    map.fitBounds([
+        [-133.2421875, 16.972741],
+        [-47.63671875, 52.696361]
+        ]);
+
+
+
+
+</script>
